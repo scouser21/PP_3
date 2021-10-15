@@ -156,6 +156,21 @@ public class User implements UserDetails {
         return roles;
     }
 
+    public boolean isAdmin(){
+        return rolesToString().contains("ADMIN");
+    }
+    public boolean isUser(){
+        return rolesToString().contains("USER");
+    }
+
+    public String rolesToString(){
+        String s = "";
+        for (Role r : roles){
+            s += r.getRole().replace("ROLE_", "") + " ";
+        }
+        return s;
+    }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

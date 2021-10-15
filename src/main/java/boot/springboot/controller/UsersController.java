@@ -4,6 +4,7 @@ import boot.springboot.model.Role;
 import boot.springboot.model.User;
 import boot.springboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -27,7 +28,8 @@ public class UsersController {
 //        User user = userService.getUserByUserName(userName);
 //        model.addAttribute("user", user);
         model.addAttribute("user", userService.getUserByUserName(principal.getName()));
-        return "userInfo";
+        model.addAttribute("roles", userService.getUserByUserName(principal.getName()).rolesToString());
+        return "userPanel";
     }
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
@@ -36,16 +38,22 @@ public class UsersController {
     }
 
     @GetMapping (value = "/admin")
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, Principal principal) {
         List<User> listUser = userService.getAllUsers();
-        model.addAttribute("usersList", listUser);
 
-        return "allUsers";
+        model.addAttribute("usersList", listUser);
+        model.addAttribute("admin", ((UsernamePasswordAuthenticationToken) principal).getPrincipal());
+        model.addAttribute("roles", userService.getUserByUserName(principal.getName()).rolesToString());
+        User user = new User();
+        model.addAttribute("userParams", user);
+
+//        return "allUsers";
+        return "adminPanel";
     }
 
     @GetMapping (value = "/")
     public String getStartView() {
-        return "startView";
+        return "login";
     }
 
     @GetMapping (value = "/admin/addNewUser")
@@ -58,6 +66,7 @@ public class UsersController {
 
     @GetMapping (value = "/admin/saveUser")
     public String saveUser(@ModelAttribute("userParams") User user,
+//                           @RequestParam(value = "age", required = false) int age,
                            @RequestParam(value = "rolesSet", required = false) String[] rolesSet ){
         user.setEnabled(1);
         Set<Role> roles = new HashSet<>();
@@ -78,7 +87,6 @@ public class UsersController {
 
     @GetMapping (value = "/admin/updateUser")
     public String updateUser(@RequestParam("id") int id, Model model){
-
         User user = userService.getUserById(id);
         model.addAttribute("userParams", user);
 
