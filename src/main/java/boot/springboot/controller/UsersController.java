@@ -25,8 +25,6 @@ public class UsersController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String getUserInfo(ModelMap model, Principal principal) {
-//        User user = userService.getUserByUserName(userName);
-//        model.addAttribute("user", user);
         model.addAttribute("user", userService.getUserByUserName(principal.getName()));
         model.addAttribute("roles", userService.getUserByUserName(principal.getName()).rolesToString());
         return "userPanel";
@@ -47,7 +45,6 @@ public class UsersController {
         User user = new User();
         model.addAttribute("userParams", user);
 
-//        return "allUsers";
         return "adminPanel";
     }
 
@@ -66,7 +63,6 @@ public class UsersController {
 
     @GetMapping (value = "/admin/saveUser")
     public String saveUser(@ModelAttribute("userParams") User user,
-//                           @RequestParam(value = "age", required = false) int age,
                            @RequestParam(value = "rolesSet", required = false) String[] rolesSet ){
         user.setEnabled(1);
         Set<Role> roles = new HashSet<>();

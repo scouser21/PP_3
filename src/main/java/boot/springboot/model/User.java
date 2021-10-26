@@ -1,5 +1,6 @@
 package boot.springboot.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -35,7 +36,9 @@ public class User implements UserDetails {
     @Column (name = "age")
     private int age;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.EAGER) //  CascadeType.ALL
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "users_id"),
+        inverseJoinColumns = @JoinColumn(name = "roles"))
     private Set<Role> roles;
 
     public User(){
@@ -173,5 +176,8 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+        for (Role r : roles){
+            r.getUsers().add(this);
+        }
     }
 }

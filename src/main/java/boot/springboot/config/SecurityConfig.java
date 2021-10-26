@@ -12,10 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private final UserDetailsService userDetailsService;
     private final LoginSuccessHandler loginSuccessHandler;
@@ -67,9 +69,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //страницы аутентификаци доступна всем
                 .antMatchers("/login").anonymous()
+//                .antMatchers("/api/**").anonymous()
+                .antMatchers("/api/**").access("hasAnyRole('ADMIN')")
+                .antMatchers("/api/**").access("hasAnyRole('USER')")
                 // защищенные URL
                 .antMatchers("/admin/**").access("hasAnyRole('ADMIN')")
                 .antMatchers("/user/**").access("hasAnyRole('USER')").anyRequest().authenticated();
+
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("*");
     }
 
     @Bean

@@ -1,9 +1,12 @@
 package boot.springboot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,8 +24,9 @@ public class Role implements GrantedAuthority {
     @Column (name = "role")
     private String role;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();;
 
     public Role(String role) {
         this.role = role;
@@ -55,6 +59,7 @@ public class Role implements GrantedAuthority {
 
     public Set<User> getUsers() {
         return users;
+//        return null;
     }
 
     public void setUsers(Set<User> users) {
@@ -66,10 +71,4 @@ public class Role implements GrantedAuthority {
         return getRole();
     }
 
-    public static List<String> getAllRoles(){
-        List<String> list = new ArrayList<>();
-        list.add("ROLE_USER");
-        list.add("ROLE_ADMIN");
-        return list;
-    }
 }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://use.fontawesome.com/releases/v5.0.11/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <title>User panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 1500px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <label class="text-white col-md-11">
+    <b> <span th:text="${user.userName}"></span> </b> with roles: <span th:text="${roles}"></span>
+  </label>
+  <form class="form-inline">
+    <button class="btn btn-sm align-middle btn-outline-secondary" onclick="window.location.href = '/logout'"
+            value="Logout" type="button">Log out</button>
+  </form>
+</nav>
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-md-1 sidenav">
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#sectionUser">User</a></li>
+      </ul>
+    </div>
+
+    <div class="col-sm-11 container-fluid">
+      <div id="sectionUser">
+        <div>
+          <div class="container-fluid">
+            <h2>User information page</h2>
+            <p id="userId" hidden th:text="${user.id}">
+            <div id="usersInfoPage">
+              <h2>About user</h2>
+              <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                  <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>userName</th>
+                    <th>name</th>
+                    <th>surname</th>
+                    <th>enabled</th>
+                    <th>age</th>
+                    <th>roles</th>
+                  </tr>
+                  </thead>
+                  <tbody id = "userInfoBody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var url = "http://localhost:8080/api/users/" + document.getElementById("userId").textContent;
+
+  console.log(document.getElementById("userId").textContent)
+
+  fetch(url)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+
+            let temp = ""
+
+            temp += "<tr>"
+            temp += "<td>" + data.id + "</td>"
+            temp += "<td>" + data.userName + "</td>"
+            temp += "<td>" + data.name + "</td>"
+            temp += "<td>" + data.surname + "</td>"
+            temp += "<td>" + data.enabled + "</td>"
+            temp += "<td>" + data.age + "</td>"
+
+            let roles = ""
+            for (let i = 0; i < data.roles.length; i++){
+              roles += data.roles[i].role.replace("ROLE_", "") + " "
+            }
+            temp += "<td>" + roles + "</td>"
+            temp += "</tr>"
+
+            document.getElementById("userInfoBody").innerHTML = temp;
+          });
+
+
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
